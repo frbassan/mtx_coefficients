@@ -6,7 +6,7 @@ import os
 # Flag to choose between original files or simulated file:
 # 1 = load and validate using 'sim_t_XX.csv'
 # 0 = run original multi-file processing ('t_40.csv' and 't_20.csv')
-calc_check = 1
+calc_check = 0
 
 # File paths
 file_paths = {
@@ -242,35 +242,35 @@ def highlight_segments():
 
 t40_label_suffix = " (Simulated)" if (calc_check == 1 and os.path.exists(simulated_file_path)) else ""
 
-# --- FIGURE 2: Peak Values Comparison ---
-plt.figure(2, figsize=(12, 6))
+# --- FIGURE 1: Peak Values Comparison ---
+plt.figure(1, figsize=(12, 6))
 plt.plot(results['T20']['distances'], results['T20']['rayleigh_values'], color='blue', linestyle='--', label='T20 - Rayleigh (Raw)', linewidth=1, alpha=0.6)
 plt.plot(results['T20']['distances'], results['T20']['brillouin_values'], color='cyan', linestyle='--', label='T20 - Brillouin (Raw)', linewidth=1.5)
 plt.plot(results['T40']['distances'], results['T40']['rayleigh_values'], color='red', label=f'T40 - Rayleigh{t40_label_suffix}', linewidth=1, alpha=0.6)
 plt.plot(results['T40']['distances'], results['T40']['brillouin_values'], color='darkorange', label=f'T40 - Brillouin{t40_label_suffix}', linewidth=1.5)
 highlight_segments()
-plt.title(f'Figure 2: Peak Values Comparison (calc_check = {calc_check})')
+plt.title(f'Figure 1: Peak Values Comparison (calc_check = {calc_check})')
 plt.xlabel('Distance (m)')
 plt.ylabel('Peak Amplitude Value')
 plt.legend(loc='upper right')
 plt.grid(True)
 plt.tight_layout()
 
-# --- FIGURE 3: Peak Bin Positions Comparison ---
-plt.figure(3, figsize=(12, 6))
+# --- FIGURE 2: Peak Bin Positions Comparison ---
+plt.figure(2, figsize=(12, 6))
 plt.plot(results['T20']['distances'], results['T20']['rayleigh_bins'], color='blue', linestyle='--', label='T20 - Rayleigh Bin (Raw)', linewidth=1, alpha=0.6)
 plt.plot(results['T20']['distances'], results['T20']['brillouin_bins'], color='cyan', linestyle='--', label='T20 - Brillouin Bin (Raw)', linewidth=1.5)
 plt.plot(results['T40']['distances'], results['T40']['rayleigh_bins'], color='red', label=f'T40 - Rayleigh Bin{t40_label_suffix}', linewidth=1, alpha=0.6)
 plt.plot(results['T40']['distances'], results['T40']['brillouin_bins'], color='darkorange', label=f'T40 - Brillouin Bin{t40_label_suffix}', linewidth=1.5)
 highlight_segments()
-plt.title(f'Figure 3: Peak Bin Positions Comparison (calc_check = {calc_check})')
+plt.title(f'Figure 2: Peak Bin Positions Comparison (calc_check = {calc_check})')
 plt.xlabel('Distance (m)')
 plt.ylabel('Frequency Bin Index')
 plt.legend(loc='upper right')
 plt.grid(True)
 plt.tight_layout()
 
-# --- FIGURES 4 & 5: CALCULATED PROFILES VIA COEFFICIENT MATRIX INVERSION ---
+# --- FIGURES 3 & 4: CALCULATED PROFILES VIA COEFFICIENT MATRIX INVERSION ---
 distances = results['T40']['distances']
 
 vB_t0 = bin_to_mhz(results['T20']['brillouin_bins'], results['T20']['freq_step'])
@@ -290,22 +290,22 @@ else:
     temperature_profile = np.full_like(distances, T0)
     strain_profile = np.zeros_like(distances)
 
-# Figure 4: Calculated Temperature Profile
-plt.figure(4, figsize=(12, 4))
+# Figure 3: Calculated Temperature Profile
+plt.figure(3, figsize=(12, 4))
 plt.plot(distances, temperature_profile, color='magenta', linewidth=1.5, label='Calculated Temperature')
 highlight_segments()
-plt.title('Figure 4: Calculated Temperature Distribution using Coefficients')
+plt.title('Figure 3: Calculated Temperature Distribution using Coefficients')
 plt.xlabel('Distance (m)')
 plt.ylabel('Temperature (°C)')
 plt.legend(loc='upper right')
 plt.grid(True)
 plt.tight_layout()
 
-# Figure 5: Calculated Strain Profile
-plt.figure(5, figsize=(12, 4))
+# Figure 4: Calculated Strain Profile
+plt.figure(4, figsize=(12, 4))
 plt.plot(distances, strain_profile, color='green', linewidth=1.5, label='Calculated Strain')
 highlight_segments()
-plt.title('Figure 5: Calculated Strain Distribution using Coefficients')
+plt.title('Figure 4: Calculated Strain Distribution using Coefficients')
 plt.xlabel('Distance (m)')
 plt.ylabel('Strain (ue)')
 plt.legend(loc='upper right')

@@ -94,33 +94,23 @@ idx_free_end = int(seg_free[1] / spatial_resolution)
 idx_met_start = int(seg_met[0] / spatial_resolution)
 idx_met_end = int(seg_met[1] / spatial_resolution)
 
-# Apply modifications to seg_free
+# Apply positive modifications to seg_free (Brillouin amplitude increases)
 brillouin_bins_sim[idx_free_start:idx_free_end] += bin_shift_free
 for i in range(idx_free_start, idx_free_end):
-    b_amp = brillouin_values[i]
-    if b_amp != 0:
-        current_ratio = rayleigh_values[i] / b_amp
-        new_ratio = current_ratio + amp_ratio_shift_free
-        rayleigh_values_sim[i] = new_ratio * b_amp
+    brillouin_values_sim[i] = brillouin_values[i] * (1.0 + amp_ratio_shift_free)
 
-# Apply modifications to seg_met
+# Apply positive modifications to seg_met (Brillouin amplitude increases)
 brillouin_bins_sim[idx_met_start:idx_met_end] += bin_shift_met
 for i in range(idx_met_start, idx_met_end):
-    b_amp = brillouin_values[i]
-    if b_amp != 0:
-        current_ratio = rayleigh_values[i] / b_amp
-        new_ratio = current_ratio + amp_ratio_shift_met
-        rayleigh_values_sim[i] = new_ratio * b_amp
+    brillouin_values_sim[i] = brillouin_values[i] * (1.0 + amp_ratio_shift_met)
 
-# Save the simulated data to CSV file using dynamic dT in the filename (e.g., sim_t_20.csv)
+# Save the simulated data to CSV file using dynamic dT in the filename
 output_file_name = f"sim_t_{int(dT+20)}.csv"
 
 with open(output_file_name, 'w', newline='', encoding='utf-8') as csvfile:
     writer = csv.writer(csvfile, delimiter=';')
-    # Write header matching structure
     writer.writerow(['Distance_m', 'Rayleigh_Peak_Amplitude', 'Brillouin_Peak_Amplitude', 'Rayleigh_Peak_Bin', 'Brillouin_Peak_Bin'])
     
-    # Write data rows
     for d, r_amp, b_amp, r_bin, b_bin in zip(distances, rayleigh_values_sim, brillouin_values_sim, rayleigh_bins, brillouin_bins_sim):
         writer.writerow([f"{d:.2f}", f"{r_amp:.6f}", f"{b_amp:.6f}", f"{r_bin}", f"{b_bin:.6f}"])
 
@@ -131,24 +121,24 @@ def highlight_segments():
     plt.axvspan(seg_free[0], seg_free[1], color='red', alpha=0.2, label='seg_free (1000-1100m)')
     plt.axvspan(seg_met[0], seg_met[1], color='darkred', alpha=0.2, label='seg_met (1500-1600m)')
 
-# Figure 2: Simulated Peak Values
-plt.figure(2, figsize=(12, 6))
-plt.plot(distances, rayleigh_values, color='blue', label='T20 - Rayleigh (Original)', linewidth=1, alpha=0.5)
-plt.plot(distances, rayleigh_values_sim, color='red', label=f'Simulated - Rayleigh (dT={dT}°C)', linewidth=1.5)
+# Figure 1: Simulated Brillouin Peak Values (Positive Shift)
+plt.figure(1, figsize=(12, 6))
+plt.plot(distances, brillouin_values, color='blue', label='T20 - Brillouin (Original)', linewidth=1, alpha=0.5)
+plt.plot(distances, brillouin_values_sim, color='red', label=f'Simulated - Brillouin (dT={dT}°C)', linewidth=1.5)
 highlight_segments()
-plt.title(f'Figure 2: Simulated Peak Values (dT = {dT}°C)')
+plt.title(f'Figure 1: Simulated Brillouin Peak Values (Positive Shift, dT = {dT}°C)')
 plt.xlabel('Distance (m)')
 plt.ylabel('Peak Amplitude Value')
 plt.legend(loc='upper right')
 plt.grid(True)
 plt.tight_layout()
 
-# Figure 3: Simulated Peak Bin Positions
-plt.figure(3, figsize=(12, 6))
+# Figure 2: Simulated Peak Bin Positions
+plt.figure(2, figsize=(12, 6))
 plt.plot(distances, brillouin_bins, color='blue', label='T20 - Brillouin Bin (Original)', linewidth=1, alpha=0.5)
 plt.plot(distances, brillouin_bins_sim, color='red', label=f'Simulated - Brillouin Bin (dT={dT}°C)', linewidth=1.5)
 highlight_segments()
-plt.title(f'Figure 3: Simulated Peak Bin Positions (dT = {dT}°C)')
+plt.title(f'Figure 2: Simulated Peak Bin Positions (dT = {dT}°C)')
 plt.xlabel('Distance (m)')
 plt.ylabel('Frequency Bin Index')
 plt.legend(loc='upper right')
